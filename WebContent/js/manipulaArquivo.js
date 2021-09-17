@@ -1,3 +1,12 @@
+class Conta {
+	constructor(id, data, saldo, nome) {
+		this.id = id;
+		this.data = data;
+		this.saldo = Number(saldo);
+		this.nome = nome;
+	}
+}
+
 var leitorDeCSV = new FileReader();
 var leitorDeCSV2 = new FileReader();
 
@@ -7,7 +16,6 @@ var totalArquivoTipo2 = 0;
 window.onload = function init() {
 	leitorDeCSV.onload = leCSV;
 	leitorDeCSV2.onload = leCSV2;
-
 }
 
 function pegaCSV(inputFile) {
@@ -20,7 +28,30 @@ function pegaCSV2(inputFile) {
 	leitorDeCSV2.readAsText(file);
 }
 
+function converterCsvContasParaObjeto(csv) {
+	var linhas = csv.split('\n');
+	var contas = [];
+
+	for (var i = 1; i < linhas.length; i++) {
+		var campos = linhas[i].split(';');
+		if (campos.length < 3) continue;
+
+		if (campos.length == 3)
+			contas.push(new Conta(campos[0], null, campos[1], campos[2]));
+		if (campos.length == 4)
+			contas.push(new Conta(campos[0], campos[1], campos[2], campos[3]));
+	}
+
+	return contas;
+}
+
 function leCSV(evt) {
+	var contas = converterCsvContasParaObjeto(evt.target.result);
+
+	totalArquivoTipo1 = 0;
+	for (var i in contas) {
+		totalArquivoTipo1 += contas[i].saldo;
+	}
 
 	var fileArr = evt.target.result.split('\n');
 	var strDiv = '<table>';
@@ -46,6 +77,12 @@ function leCSV(evt) {
 }
 
 function leCSV2(evt) {
+	var contas = converterCsvContasParaObjeto(evt.target.result);
+
+	totalArquivoTipo2 = 0;
+	for (var i in contas) {
+		totalArquivoTipo2 += contas[i].saldo;
+	}
 
 	var fileArr = evt.target.result.split('\n');
 	var strDiv = '<table>';
